@@ -16,6 +16,7 @@ public record PropriedadeDTO(
         String aluguel,
         String dataPagamento,
         String locatarioID,
-        String proprietario
+        String proprietarioID,
+        String userId
 ) {
 }

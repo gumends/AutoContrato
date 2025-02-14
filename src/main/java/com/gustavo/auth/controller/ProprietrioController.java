@@ -31,10 +31,25 @@ public class ProprietrioController {
         return proprietarioService.saveProprietario(proprietario, id);
     }
 
-    @GetMapping("/all")
-    public ResponseEntity<List<Proprietario>> getAllProprietarios(@RequestHeader("Authorization") String token){
+    @GetMapping("/todos")
+    public ResponseEntity<List<Proprietario>> buscarProprietarios(@RequestHeader("Authorization") String token){
         String id = tokenService.getUserIdFromToken(token);
         return proprietarioService.getAllProprietarios(id);
+    }
+
+    @DeleteMapping("/status/alterar/{id}")
+    public ResponseEntity<Proprietario> alterarStatus(@PathVariable("id") String id){
+        return proprietarioService.alterarStatusProprietario(id);
+    }
+
+    @PatchMapping("/atualizar/{id}")
+    public ResponseEntity<Proprietario> atualizar(@PathVariable("id") String id, @RequestBody ProprietarioDTO proprietario){
+        return proprietarioService.atualizarProprietario(id, proprietario);
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<Proprietario> buscarProprietario(@PathVariable("id") String id){
+        return proprietarioService.getById(id);
     }
 
 }
