@@ -22,7 +22,7 @@ public class ProprietarioService {
     private PropriedadeRepository propriedadeRepository;
 
 
-    public ResponseEntity<Proprietario> saveProprietario(ProprietarioDTO proprietarioDTO, String id){
+    public ResponseEntity<Proprietario> saveProprietario(ProprietarioDTO proprietarioDTO, String id) {
         Proprietario p = new Proprietario();
 
         p.setCpf(proprietarioDTO.cpf());
@@ -36,11 +36,11 @@ public class ProprietarioService {
         return ResponseEntity.ok(proprietarioRepository.save(p));
     }
 
-    public ResponseEntity<List<Proprietario>> getAllProprietarios(String id){
+    public ResponseEntity<List<Proprietario>> getAllProprietarios(String id) {
         return ResponseEntity.ok(Collections.singletonList(proprietarioRepository.findAllByUserId(id)));
     }
 
-    public ResponseEntity<Proprietario> getById(String id){
+    public ResponseEntity<Proprietario> getById(String id) {
         return ResponseEntity.ok(proprietarioRepository.findById(id).orElseThrow());
     }
 
@@ -82,5 +82,4 @@ public class ProprietarioService {
 
         return ResponseEntity.ok(updatedProprietario);
     }
-
 }

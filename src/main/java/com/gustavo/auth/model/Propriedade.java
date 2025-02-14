@@ -41,6 +41,12 @@ public class Propriedade {
     @OneToOne(mappedBy = "propriedade", cascade = CascadeType.ALL)
     private Locatario locatario;
 
+    @Column(nullable = false)
+    private String userId;
+
+    @Column(nullable = false)
+    private Boolean status = true;
+
     @ManyToOne
     @JoinColumn(name = "proprietario_id")
     private Proprietario proprietario;

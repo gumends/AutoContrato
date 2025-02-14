@@ -18,7 +18,7 @@ public class Locatario {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)  // Garante que o campo não seja NULL no banco de dados
+    @Column(nullable = false)
     private String nome;
 
     @Column(nullable = false)
@@ -29,6 +29,9 @@ public class Locatario {
 
     @Column(nullable = false)
     private Date nascimento;
+
+    @Column(nullable = false)
+    private String userId;
 
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne
