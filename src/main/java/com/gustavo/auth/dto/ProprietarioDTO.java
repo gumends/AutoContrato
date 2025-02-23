@@ -10,7 +10,6 @@ public record ProprietarioDTO(
         String cpf,
         String nacionalidade,
         Date nascimento,
-        Set<String> propriedadeId,
-        String userId
+        Boolean status
 ) {
 }

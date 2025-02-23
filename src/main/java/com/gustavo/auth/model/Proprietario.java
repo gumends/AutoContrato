@@ -19,7 +19,7 @@ public class Proprietario {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    @Column(nullable = false)  // Garante que o campo não seja NULL no banco de dados
+    @Column(nullable = false)
     private String nome;
 
     @Column(nullable = false)

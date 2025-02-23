@@ -1,23 +1,20 @@
 package com.gustavo.auth.controller;
 
-import com.gustavo.auth.dto.PropriedadeDTO;
-import com.gustavo.auth.model.Locatario;
-import com.gustavo.auth.model.Propriedade;
-import com.gustavo.auth.service.PropriedadeService;
+import com.gustavo.auth.dto.LocatarioDTO;
 import com.gustavo.auth.infra.security.TokenService;
+import com.gustavo.auth.model.Locatario;
+import com.gustavo.auth.service.LocatarioService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import java.util.List;
-
 @RestController
-@RequestMapping("/propriedades") // Recurso no plural
-public class PropriedadeController {
+@RequestMapping("/locatarios")
+public class LocatarioController {
 
     @Autowired
-    private PropriedadeService propriedadeService;
+    private LocatarioService locatarioService;
 
     @Autowired
     private TokenService tokenService;
@@ -27,44 +24,44 @@ public class PropriedadeController {
     }
 
     @PostMapping
-    public ResponseEntity<Propriedade> createPropriedade(
+    public ResponseEntity<Locatario> createLocatario(
             @RequestHeader("Authorization") String token,
-            @RequestBody PropriedadeDTO propriedadeDTO) {
+            @RequestBody LocatarioDTO locatarioDTO) {
         String userId = getUserIdFromToken(token);
-        return propriedadeService.criarPropriedade(propriedadeDTO, userId);
+        return locatarioService.createLocatario(userId, locatarioDTO);
     }
 
     @PatchMapping("/{id}")
-    public ResponseEntity<?> patchPropriedade(
+    public ResponseEntity<?> patchLocatario(
             @RequestHeader("Authorization") String token,
-            @PathVariable("id") String id,
-            @RequestBody PropriedadeDTO propriedadeDTO) {
+            @RequestBody LocatarioDTO locatarioDTO,
+            @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
-        return propriedadeService.atualizarProprietario(id, userId, propriedadeDTO);
+        return locatarioService.patchedLocatario(id, userId, locatarioDTO);
     }
 
     @GetMapping
-    public Page<Propriedade> getAllPropriedades(
+    public Page<Locatario> getAllLocatarios(
             @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho) {
         String userId = getUserIdFromToken(token);
-        return propriedadeService.getAllPropriedades(userId, pagina, tamanho);
+        return locatarioService.findAllLocatarios(userId, pagina, tamanho);
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<?> getPropriedadeById(
+    public ResponseEntity<Locatario> getLocatarioById(
             @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
-        return propriedadeService.getById(userId, id);
+        return locatarioService.findLocatario(id, userId);
     }
 
     @PatchMapping("/{id}/status")
-    public ResponseEntity<?> updatePropriedadeStatus(
+    public ResponseEntity<?> updateLocatarioStatus(
             @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
-        return propriedadeService.alterarStatusProprietario(userId, id);
+        return locatarioService.alteraStatusLocatario(userId, id);
     }
 }

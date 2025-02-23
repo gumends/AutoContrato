@@ -1,10 +1,14 @@
 package com.gustavo.auth.service;
 
 import com.gustavo.auth.dto.ProprietarioDTO;
+import com.gustavo.auth.exception.exceptions.EventNotFoundException;
 import com.gustavo.auth.model.Proprietario;
 import com.gustavo.auth.repository.PropriedadeRepository;
 import com.gustavo.auth.repository.ProprietarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -21,8 +25,11 @@ public class ProprietarioService {
     @Autowired
     private PropriedadeRepository propriedadeRepository;
 
-
     public ResponseEntity<Proprietario> saveProprietario(ProprietarioDTO proprietarioDTO, String id) {
+        if (id == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
         Proprietario p = new Proprietario();
 
         p.setCpf(proprietarioDTO.cpf());
@@ -30,18 +37,22 @@ public class ProprietarioService {
         p.setNome(proprietarioDTO.nome());
         p.setNascimento(proprietarioDTO.nascimento());
         p.setNacionalidade(proprietarioDTO.nacionalidade());
-        p.setPropriedades(propriedadeRepository.findAllById(proprietarioDTO.propriedadeId()));
         p.setUserId(id);
 
         return ResponseEntity.ok(proprietarioRepository.save(p));
     }
 
-    public ResponseEntity<List<Proprietario>> getAllProprietarios(String id) {
-        return ResponseEntity.ok(Collections.singletonList(proprietarioRepository.findAllByUserId(id)));
+    public Page<Proprietario> getAllProprietarios(String id, int pagina, int tamanho) {
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+        return proprietarioRepository.findAllByUserId(id, pageable);
     }
 
-    public ResponseEntity<Proprietario> getById(String id) {
-        return ResponseEntity.ok(proprietarioRepository.findById(id).orElseThrow());
+    public ResponseEntity<Proprietario> buscaProprietario(String id, String userId) {
+        Proprietario proprietario = proprietarioRepository.findByUserIdAndId(userId, id);
+        if (proprietario == null) {
+            throw new EventNotFoundException("Proprietário não encontrado com o ID: " + id);
+        }
+        return ResponseEntity.ok(proprietario);
     }
 
     public ResponseEntity<Proprietario> alterarStatusProprietario(String id) {
@@ -75,8 +86,6 @@ public class ProprietarioService {
         proprietario.setCpf(proprietarioDTO.cpf());
         proprietario.setNacionalidade(proprietarioDTO.nacionalidade());
         proprietario.setNascimento(proprietarioDTO.nascimento());
-
-        proprietario.setPropriedades(propriedadeRepository.findAllById(proprietarioDTO.propriedadeId()));
 
         Proprietario updatedProprietario = proprietarioRepository.save(proprietario);
 

@@ -33,6 +33,9 @@ public class Locatario {
     @Column(nullable = false)
     private String userId;
 
+    @Column(nullable = false)
+    private Boolean status = true;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne
     @JoinColumn(name = "propriedade_id")

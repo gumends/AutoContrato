@@ -1,10 +1,14 @@
 package com.gustavo.auth.service;
 
 import com.gustavo.auth.dto.PropriedadeDTO;
+import com.gustavo.auth.model.Locatario;
 import com.gustavo.auth.model.Propriedade;
 import com.gustavo.auth.repository.PropriedadeRepository;
 import com.gustavo.auth.repository.ProprietarioRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
@@ -37,23 +41,24 @@ public class PropriedadeService {
         return ResponseEntity.ok(propriedadeRepository.save(p));
     }
 
-    public ResponseEntity<List<Propriedade>> getAllProprietarios(String id) {
-        return ResponseEntity.ok(Collections.singletonList(propriedadeRepository.findAllByUserId(id)));
+    public Page<Propriedade> getAllPropriedades(String id, int pagina, int tamanho) {
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+        return propriedadeRepository.findAllByUserId(id, pageable);
     }
 
-    public ResponseEntity<Propriedade> getById(String id) {
-        return ResponseEntity.ok(propriedadeRepository.findById(id).orElseThrow());
+    public ResponseEntity<Propriedade> getById(String id, String userId) {
+        return ResponseEntity.ok(propriedadeRepository.findByUserIdAndId(id, userId));
     }
 
-    public ResponseEntity<Propriedade> alterarStatusProprietario(String id) {
+    public ResponseEntity<Propriedade> alterarStatusProprietario(String id, String userId) {
 
-        Optional<Propriedade> propriedade = propriedadeRepository.findById(id);
+        Optional<Propriedade> optionalPropriedade = propriedadeRepository.findById(id);
 
-        if (propriedade.isEmpty()) {
+        if (optionalPropriedade.isEmpty() && !optionalPropriedade.get().getUserId().equals(userId)) {
             return ResponseEntity.notFound().build();
         }
 
-        Propriedade p = propriedade.get();
+        Propriedade p = optionalPropriedade.get();
 
         p.setStatus(!p.getStatus());
 
@@ -61,11 +66,11 @@ public class PropriedadeService {
         return ResponseEntity.ok(updatedPropriedade);
     }
 
-    public ResponseEntity<Propriedade> atualizarProprietario(String id, PropriedadeDTO propriedade) {
+    public ResponseEntity<Propriedade> atualizarProprietario(String id, String userId, PropriedadeDTO propriedade) {
 
         Optional<Propriedade> optionalPropriedade = propriedadeRepository.findById(id);
 
-        if (optionalPropriedade.isEmpty()) {
+        if (optionalPropriedade.isEmpty() && !optionalPropriedade.get().getUserId().equals(userId)) {
             return ResponseEntity.notFound().build();
         }
 

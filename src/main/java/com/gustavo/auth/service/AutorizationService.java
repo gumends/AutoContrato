@@ -14,12 +14,15 @@ import org.springframework.stereotype.Service;
 public class AutorizationService implements UserDetailsService {
 
     @Autowired
-    UserRepository userRepository;
+    private UserRepository userRepository;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findByLogin(username);
+        UserDetails user = userRepository.findByLogin(username);
+        if (user == null) {
+            throw new UsernameNotFoundException("Usuário não encontrado");
+        }
+        return user;
     }
-
-
 }
+
