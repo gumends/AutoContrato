@@ -1,17 +1,19 @@
 package com.gustavo.auth.model;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.GeneratedValue;
-import jakarta.persistence.GenerationType;
-import jakarta.persistence.Id;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
+import java.time.LocalDateTime;
 import java.util.Collection;
+import java.util.Date;
 import java.util.List;
 
 @NoArgsConstructor
@@ -24,19 +26,37 @@ public class Usuario implements UserDetails {
     @GeneratedValue(strategy = GenerationType.UUID)
     private String id;
 
-    private String login;
+    @JsonIgnore
     private String senha;
     private String nome;
-    private int idade;
+    private String cpf;
     private String email;
 
     private UserRole role;
 
-    public Usuario(String login, String senha, String nome, int idade, String email, UserRole role) {
-        this.login = login;
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    public Usuario(String senha, String nome, String cpf, String email, UserRole role) {
         this.senha = senha;
         this.nome = nome;
-        this.idade = idade;
+        this.cpf = cpf;
         this.email = email;
         this.role = role;
     }
@@ -47,6 +67,7 @@ public class Usuario implements UserDetails {
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 
+    @JsonIgnore
     @Override
     public String getPassword() {
         return senha;
@@ -54,7 +75,7 @@ public class Usuario implements UserDetails {
 
     @Override
     public String getUsername() {
-        return login;
+        return email;
     }
 
     @Override
