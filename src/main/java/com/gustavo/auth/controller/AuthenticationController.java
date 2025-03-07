@@ -41,19 +41,19 @@ public class AuthenticationController {
 
     @PostMapping("/registrar")
     public ResponseEntity register(@RequestBody RegisterDto registerDto){
+        System.out.println(registerDto);
         try {
-            if(this.repository.findByLogin(registerDto.login()) != null) return ResponseEntity.badRequest().build();
+            if(this.repository.findByEmail(registerDto.email()) != null) return ResponseEntity.badRequest().build();
             String encrypted = new BCryptPasswordEncoder().encode(registerDto.senha());
             Usuario newUser = new Usuario(
-                    registerDto.login(),
                     encrypted,
                     registerDto.nome(),
-                    registerDto.idade(),
+                    registerDto.cpf(),
                     registerDto.email(),
                     registerDto.role()
             );
             this.repository.save(newUser);
-            return this.login(new AutenticateDTO(registerDto.login(), registerDto.senha()));
+            return this.login(new AutenticateDTO(registerDto.email(), registerDto.senha()));
         }catch (Exception e){
             return ResponseEntity.status(401).body("Não foi possivel realizar o cadastro");
         }
