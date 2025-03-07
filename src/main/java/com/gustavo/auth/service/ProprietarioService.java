@@ -42,9 +42,9 @@ public class ProprietarioService {
         return ResponseEntity.ok(proprietarioRepository.save(p));
     }
 
-    public Page<Proprietario> getAllProprietarios(String id, int pagina, int tamanho) {
+    public Page<Proprietario> getAllProprietarios(String id, Boolean status, String nome, int pagina, int tamanho) {
         Pageable pageable = PageRequest.of(pagina, tamanho);
-        return proprietarioRepository.findAllByUserId(id, pageable);
+        return proprietarioRepository.findAllByUserIdAndStatusAndNomeContainingIgnoreCase(id, status, nome, pageable);
     }
 
     public ResponseEntity<Proprietario> buscaProprietario(String id, String userId) {
@@ -90,5 +90,9 @@ public class ProprietarioService {
         Proprietario updatedProprietario = proprietarioRepository.save(proprietario);
 
         return ResponseEntity.ok(updatedProprietario);
+    }
+    
+    public  ResponseEntity<List<Proprietario>> buscaTodosProprietarios(String userId, boolean status){
+        return ResponseEntity.ok(proprietarioRepository.findAllByUserIdAndStatus(userId, status));
     }
 }
