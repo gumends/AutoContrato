@@ -1,5 +1,6 @@
 package com.gustavo.auth.infra.security;
 
+import com.gustavo.auth.exception.exceptions.CustomAuthenticationEntryPoint;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -27,17 +28,19 @@ public class securityConfiguration {
         return httpSecurity
                 .csrf(csrf -> csrf.disable())
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class) // ✅ Aplicando o filtro de CORS
+                .addFilterBefore(corsFilter, UsernamePasswordAuthenticationFilter.class)
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/auth/register").permitAll()
-                        .requestMatchers(HttpMethod.POST, "/proprietario/criar").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/propriedade/todos").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/locatario/criar").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.POST, "/locatario/all").hasRole("ADMIN")
-                        .requestMatchers(HttpMethod.GET, "/item").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
+                        .requestMatchers(HttpMethod.POST, "/proprietarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/propriedades").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/propriedades").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/locatarios/:id/status").hasRole("USER")
+                        .requestMatchers(HttpMethod.POST, "/locatarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/item").hasRole("USER")
                         .anyRequest().authenticated()
                 )
+                .exceptionHandling(ex -> ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
                 .addFilterBefore(securityFilter, UsernamePasswordAuthenticationFilter.class)
                 .build();
     }
