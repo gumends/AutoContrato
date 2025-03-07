@@ -1,8 +1,6 @@
 package com.gustavo.auth.service;
 
-import com.auth0.jwt.JWT;
-import com.auth0.jwt.algorithms.Algorithm;
-import com.auth0.jwt.exceptions.JWTVerificationException;
+import com.gustavo.auth.exception.exceptions.EventNotFoundException;
 import com.gustavo.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -17,10 +15,10 @@ public class AutorizationService implements UserDetailsService {
     private UserRepository userRepository;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        UserDetails user = userRepository.findByLogin(username);
+    public UserDetails loadUserByUsername(String email) {
+        UserDetails user = userRepository.findByEmail(email);
         if (user == null) {
-            throw new UsernameNotFoundException("Usuário não encontrado");
+            throw new UsernameNotFoundException("Usuário não encontrado: " + email);
         }
         return user;
     }
