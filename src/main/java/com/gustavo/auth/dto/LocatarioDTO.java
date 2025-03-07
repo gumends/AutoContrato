@@ -12,6 +12,8 @@ public record LocatarioDTO(
     String cpf,
     Date nascimento,
     String propriedadeId,
-    String userId
+    String userId,
+    boolean status,
+    boolean alocado
 ) {
 }

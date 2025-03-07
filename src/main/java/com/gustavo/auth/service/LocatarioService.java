@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class LocatarioService {
@@ -24,6 +25,20 @@ public class LocatarioService {
 
     @Autowired
     private PropriedadeRepository propriedadeRepository;
+
+    @Autowired
+    private PropriedadeService propriedadeService;
+
+    public ResponseEntity<List<Locatario>> buscaTodosLocatarios(String userId, boolean alocado, boolean status){
+        System.out.println(!alocado);
+        if (!alocado){
+            return ResponseEntity.ok(locatarioRepository.findAllByUserIdAndStatus(userId, status).stream()
+                    .filter(locatario -> !locatario.getAlocado())
+                    .collect(Collectors.toList()
+            ));
+        }
+        return ResponseEntity.ok(locatarioRepository.findAllByUserIdAndStatus(userId, status));
+    }
 
     public ResponseEntity<Locatario> createLocatario(String userID, LocatarioDTO locatarioDTO) {
         Locatario lo = new Locatario();
@@ -36,33 +51,32 @@ public class LocatarioService {
         lo.setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
         locatarioRepository.save(lo);
 
+        if (locatarioDTO.propriedadeId() != null){
+            propriedadeService.alugarDesalugarCasa(locatarioDTO.propriedadeId(), true);
+        }
+
         return ResponseEntity.status(HttpStatus.CREATED)
                 .body(lo);
     }
 
-    public Page<Locatario> findAllLocatarios(String id, int pagina, int tamanho){
+    public Page<Locatario> findAllLocatarios(String id, Boolean status, String nome, int pagina, int tamanho){
         Pageable pageable = PageRequest.of(pagina, tamanho);
-        return locatarioRepository.findAllByUserId(id, pageable);
+        return locatarioRepository.findAllByUserIdAndStatusAndNomeContainingIgnoreCase(id, status, nome, pageable);
     }
 
     public ResponseEntity<Locatario> findLocatario(String id, String userId) {
         Locatario locatario = locatarioRepository.findByUserIdAndId(userId, id);
 
         if (locatario == null) {
-            throw new EventNotFoundException("Proprietário não encontrado com o ID: " + id);
+            throw new EventNotFoundException("Locatario não encontrado com o ID: " + id);
         }
         return ResponseEntity.ok(locatario);
     }
 
     public ResponseEntity<Locatario> alteraStatusLocatario(String id, String userId){
-        Optional<Locatario> locatario = locatarioRepository.findById(id);
-
-        if (locatario.isPresent() && locatario.get().getUserId().equals(userId)) {
-            locatario.get().setStatus(!locatario.get().getStatus());
-            return ResponseEntity.ok(locatarioRepository.save(locatario.get()));
-        }
-
-        return ResponseEntity.status(HttpStatus.NOT_FOUND).body(null);
+        Locatario locatario = locatarioRepository.findByUserIdAndId(id, userId);
+        locatario.setStatus(!locatario.getStatus());
+        return ResponseEntity.ok(locatarioRepository.save(locatario));
     }
 
     public ResponseEntity<Locatario> patchedLocatario(String id, String userId, LocatarioDTO locatarioDTO){
@@ -74,6 +88,7 @@ public class LocatarioService {
             locatario.get().setCpf(locatarioDTO.cpf());
             locatario.get().setNascimento(locatarioDTO.nascimento());
             locatario.get().setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
+
             return ResponseEntity.ok(locatarioRepository.save(locatario.get()));
         }
 

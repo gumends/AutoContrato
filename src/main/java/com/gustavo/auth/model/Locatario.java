@@ -5,7 +5,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.Date;
 
 @Entity
@@ -36,8 +39,30 @@ public class Locatario {
     @Column(nullable = false)
     private Boolean status = true;
 
+    @Column(nullable = false)
+    private Boolean alocado = false;
+
     @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @OneToOne
     @JoinColumn(name = "propriedade_id")
     private Propriedade propriedade;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }

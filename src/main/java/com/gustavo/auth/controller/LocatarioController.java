@@ -9,6 +9,8 @@ import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/locatarios")
 public class LocatarioController {
@@ -21,6 +23,16 @@ public class LocatarioController {
 
     private String getUserIdFromToken(String token) {
         return tokenService.getUserIdFromToken(token);
+    }
+
+    @GetMapping("/todos")
+    public ResponseEntity<List<Locatario>> PropriedadeController(
+            @RequestHeader("Authorization") String token,
+            @RequestParam(defaultValue = "true") boolean status,
+            @RequestParam(defaultValue = "true") boolean alocado
+    ) {
+        String userId = getUserIdFromToken(token);
+        return locatarioService.buscaTodosLocatarios(userId, alocado, status);
     }
 
     @PostMapping
@@ -43,10 +55,12 @@ public class LocatarioController {
     @GetMapping
     public Page<Locatario> getAllLocatarios(
             @RequestHeader("Authorization") String token,
+            @RequestParam(defaultValue = "true") boolean status,
+            @RequestParam(defaultValue = "") String nome,
             @RequestParam(defaultValue = "0") int pagina,
             @RequestParam(defaultValue = "10") int tamanho) {
         String userId = getUserIdFromToken(token);
-        return locatarioService.findAllLocatarios(userId, pagina, tamanho);
+        return locatarioService.findAllLocatarios(userId, status, nome, pagina, tamanho);
     }
 
     @GetMapping("/{id}")
@@ -61,6 +75,7 @@ public class LocatarioController {
     public ResponseEntity<?> updateLocatarioStatus(
             @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
+        System.out.println(id);
         String userId = getUserIdFromToken(token);
         return locatarioService.alteraStatusLocatario(userId, id);
     }

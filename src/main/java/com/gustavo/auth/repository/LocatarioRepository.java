@@ -9,6 +9,7 @@ import org.springframework.data.domain.Pageable;
 import java.util.List;
 
 public interface LocatarioRepository extends JpaRepository<Locatario, String> {
-    Page<Locatario> findAllByUserId(String id, Pageable pageable);
+    Page<Locatario> findAllByUserIdAndStatusAndNomeContainingIgnoreCase(String id, Boolean status, String nome, Pageable pageable);
+    List<Locatario> findAllByUserIdAndStatus(String userId, boolean status);
     Locatario findByUserIdAndId(String id, String UserId);
 }
