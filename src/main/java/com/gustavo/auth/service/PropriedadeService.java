@@ -1,7 +1,7 @@
 package com.gustavo.auth.service;
 
 import com.gustavo.auth.dto.PropriedadeDTO;
-import com.gustavo.auth.model.Locatario;
+import com.gustavo.auth.exception.exceptions.EventNotFoundException;
 import com.gustavo.auth.model.Propriedade;
 import com.gustavo.auth.repository.PropriedadeRepository;
 import com.gustavo.auth.repository.ProprietarioRepository;
@@ -35,18 +35,36 @@ public class PropriedadeService {
         p.setLocalizacao(propriedade.localizacao());
         p.setAluguel(propriedade.aluguel());
         p.setDataPagamento(propriedade.dataPagamento());
-        p.setProprietario(proprietarioRepository.findById(propriedade.proprietarioID()).orElseThrow());
+        System.out.println(propriedade.proprietarioID());
+        if (propriedade.proprietarioID() != null){
+            p.setProprietario(proprietarioRepository.findById(propriedade.proprietarioID()).orElseThrow());
+        } else {
+            p.setProprietario(null);
+        }
+
         p.setUserId(id);
 
         return ResponseEntity.ok(propriedadeRepository.save(p));
     }
 
-    public Page<Propriedade> getAllPropriedades(String id, int pagina, int tamanho) {
-        Pageable pageable = PageRequest.of(pagina, tamanho);
-        return propriedadeRepository.findAllByUserId(id, pageable);
+    public ResponseEntity<Propriedade> removerLocatario(String id){
+        Propriedade p = propriedadeRepository.findById(id).orElseThrow();
+        p.setLocatario(null);
+        return ResponseEntity.ok(propriedadeRepository.save(p));
     }
 
-    public ResponseEntity<Propriedade> getById(String id, String userId) {
+    public ResponseEntity<Propriedade> removerProprietario(String id){
+        Propriedade p = propriedadeRepository.findById(id).orElseThrow();
+        p.setProprietario(null);
+        return ResponseEntity.ok(propriedadeRepository.save(p));
+    }
+
+    public Page<Propriedade> getAllPropriedades(String id, Boolean status, String rua, int pagina, int tamanho) {
+        Pageable pageable = PageRequest.of(pagina, tamanho);
+        return propriedadeRepository.findAllByUserIdAndStatusAndRuaContainingIgnoreCase(id, status, rua, pageable);
+    }
+
+    public ResponseEntity<Propriedade> getById(String id,  String userId) {
         return ResponseEntity.ok(propriedadeRepository.findByUserIdAndId(id, userId));
     }
 
@@ -85,10 +103,24 @@ public class PropriedadeService {
         p.setAluguel(propriedade.aluguel());
         p.setDataPagamento(propriedade.dataPagamento());
         p.setProprietario(proprietarioRepository.findById(propriedade.proprietarioID()).orElseThrow());
-        p.setUserId(id);
 
         Propriedade updatedPropriedade = propriedadeRepository.save(p);
 
         return ResponseEntity.ok(updatedPropriedade);
+    }
+
+    public ResponseEntity<List<Propriedade>> buscaTodasPropriedades(String userId){
+        return ResponseEntity.ok(propriedadeRepository.findAllByUserId(userId));
+    }
+
+    public ResponseEntity<String> alugarDesalugarCasa(String id, boolean alugar){
+        Propriedade p = propriedadeRepository.findById(id).orElseThrow();
+        p.setAlugada(alugar);
+        propriedadeRepository.save(p);
+        if (alugar){
+            return ResponseEntity.ok("Propriedade alugada");
+        } else {
+            return ResponseEntity.ok("Propriedade Desoculpadada");
+        }
     }
 }

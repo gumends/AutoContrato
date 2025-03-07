@@ -4,7 +4,10 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+import org.springframework.data.annotation.CreatedDate;
+import org.springframework.data.annotation.LastModifiedDate;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Getter
@@ -47,7 +50,29 @@ public class Propriedade {
     @Column(nullable = false)
     private Boolean status = true;
 
+    @Column(nullable = false)
+    private Boolean alugada = false;
+
     @ManyToOne
-    @JoinColumn(name = "proprietario_id")
+    @JoinColumn(name = "proprietario_id", nullable = true)
     private Proprietario proprietario;
+
+    @CreatedDate
+    @Column(name = "created_at", nullable = false, updatable = false)
+    private LocalDateTime createdAt;
+
+    @LastModifiedDate
+    @Column(name = "updated_at")
+    private LocalDateTime updatedAt;
+
+    @PrePersist
+    public void prePersist() {
+        this.createdAt = LocalDateTime.now();
+        this.updatedAt = LocalDateTime.now();
+    }
+
+    @PreUpdate
+    public void preUpdate() {
+        this.updatedAt = LocalDateTime.now();
+    }
 }
