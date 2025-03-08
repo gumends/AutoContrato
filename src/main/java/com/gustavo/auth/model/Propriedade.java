@@ -7,6 +7,7 @@ import lombok.Setter;
 import org.springframework.data.annotation.CreatedDate;
 import org.springframework.data.annotation.LastModifiedDate;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
@@ -37,7 +38,7 @@ public class Propriedade {
     @Column(nullable = false)
     private String localizacao;
 
-    private String aluguel;
+    private BigDecimal aluguel;
 
     private String dataPagamento;
 
@@ -75,4 +76,5 @@ public class Propriedade {
     public void preUpdate() {
         this.updatedAt = LocalDateTime.now();
     }
+
 }
