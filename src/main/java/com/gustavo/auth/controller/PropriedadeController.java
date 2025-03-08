@@ -12,6 +12,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+import java.util.stream.Stream;
 
 @RestController
 @RequestMapping("/propriedades") // Recurso no plural
@@ -87,5 +90,13 @@ public class PropriedadeController {
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return propriedadeService.alterarStatusProprietario(userId, id);
+    }
+
+    @GetMapping("/aluguel")
+    public ResponseEntity<Map<String, Object>> aluguel(
+            @RequestHeader("Authorization") String token
+    ){
+        String userId = getUserIdFromToken(token);
+        return propriedadeService.aluguel(userId);
     }
 }

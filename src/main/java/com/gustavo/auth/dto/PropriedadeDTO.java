@@ -3,6 +3,7 @@ package com.gustavo.auth.dto;
 import com.gustavo.auth.model.Locatario;
 import com.gustavo.auth.model.Proprietario;
 
+import java.math.BigDecimal;
 import java.util.UUID;
 
 public record PropriedadeDTO(
@@ -13,7 +14,7 @@ public record PropriedadeDTO(
         String bairro,
         String cep,
         String localizacao,
-        String aluguel,
+        BigDecimal aluguel,
         String dataPagamento,
         String locatarioID,
         String proprietarioID,

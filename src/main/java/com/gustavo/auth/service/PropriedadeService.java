@@ -12,9 +12,10 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
-import java.util.Collections;
-import java.util.List;
-import java.util.Optional;
+import java.math.BigDecimal;
+import java.util.*;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Service
 public class PropriedadeService {
@@ -122,5 +123,36 @@ public class PropriedadeService {
         } else {
             return ResponseEntity.ok("Propriedade Desoculpadada");
         }
+    }
+
+    public ResponseEntity<Map<String, Object>> aluguel(String userId){
+        List<Propriedade> propriedades = propriedadeRepository.findAllByUserId(userId);
+
+        List<BigDecimal> propriedadesAlugadas = propriedades
+                .stream()
+                .filter(Propriedade::getAlugada)
+                .map(Propriedade::getAluguel).toList();
+
+        BigDecimal alugelReceber = BigDecimal.ZERO;
+
+        for (BigDecimal valor: propriedadesAlugadas){
+            alugelReceber = alugelReceber.add(valor);
+        }
+
+        List<BigDecimal> propriedadesDisponiveis = propriedades
+                .stream()
+                .map(Propriedade::getAluguel).toList();
+
+        BigDecimal alugelTotal = BigDecimal.ZERO;
+
+        for (BigDecimal valor: propriedadesDisponiveis){
+            alugelTotal = alugelTotal.add(valor);
+        }
+
+        Map<String, Object> json = new HashMap<>();
+
+        json.put("receber", alugelReceber);
+        json.put("total", alugelTotal);
+        return ResponseEntity.ok(json);
     }
 }
