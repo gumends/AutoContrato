@@ -1,6 +1,8 @@
 package com.gustavo.auth.service;
 
 import com.gustavo.auth.dto.RegisterDto;
+import com.gustavo.auth.dto.RoleDTO;
+import com.gustavo.auth.exception.exceptions.EventNotFoundException;
 import com.gustavo.auth.model.UserRole;
 import com.gustavo.auth.model.Usuario;
 import com.gustavo.auth.repository.UserRepository;
@@ -12,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 
 @Service
@@ -42,10 +46,17 @@ public class UsuarioService {
         return ResponseEntity.ok(userRepository.save(u));
     }
 
-    public ResponseEntity<Usuario> alterarRole(String id, UserRole role){
-        Usuario u = userRepository.findById(id).orElseThrow();
-        System.out.println(role);
-        u.setRole(role);
+    public ResponseEntity<Usuario> alterarRole(String id, RoleDTO roleDTO) {
+        Usuario u = userRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado"));
+
+        if (roleDTO.getRole().equalsIgnoreCase("ADMIN")) {
+            u.setRole(UserRole.ADMIN);
+        } else if (roleDTO.getRole().equalsIgnoreCase("USER")) {
+            u.setRole(UserRole.USER);
+        } else {
+            throw new EventNotFoundException("Tipo de usuário não encontrado");
+        }
+
         return ResponseEntity.ok(userRepository.save(u));
     }
 

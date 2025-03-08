@@ -2,6 +2,7 @@ package com.gustavo.auth.controller;
 
 import com.gustavo.auth.dto.PropriedadeDTO;
 import com.gustavo.auth.dto.RegisterDto;
+import com.gustavo.auth.dto.RoleDTO;
 import com.gustavo.auth.model.UserRole;
 import com.gustavo.auth.model.Usuario;
 import com.gustavo.auth.service.UsuarioService;
@@ -50,7 +51,7 @@ public class UsuarioController {
         return usuarioService.deletarUsuario(id);
     }
 
-    @PatchMapping("/{id}/novaSenha")
+    @PatchMapping("/{id}/senha")
     public ResponseEntity<Usuario> novaSenha(
             @RequestBody String senha,
             @PathVariable("id") String id
@@ -58,9 +59,9 @@ public class UsuarioController {
         return usuarioService.alterarSenha(id, senha);
     }
 
-    @PatchMapping("/{id}/role")
+    @PatchMapping("/{id}/permissao")
     public ResponseEntity<Usuario> alterarRole(
-            @RequestBody UserRole role,
+            @RequestBody RoleDTO role,
             @PathVariable("id") String id
     ){
         return usuarioService.alterarRole(id, role);
