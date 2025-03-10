@@ -1,10 +1,10 @@
 package com.gustavo.auth.dto;
 
-import com.gustavo.auth.model.UserRole;
+import com.gustavo.auth.model.UsuarioPermissao;
 
 public record RegisterDto(
         String senha,
-        UserRole role,
+        UsuarioPermissao permissao,
         String nome,
         String cpf,
         String email
