@@ -48,7 +48,11 @@ public class LocatarioService {
         lo.setCpf(locatarioDTO.cpf());
         lo.setNascimento(locatarioDTO.nascimento());
         lo.setUserId(userID);
-        lo.setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
+        if (locatarioDTO.propriedadeId() != null){
+            lo.setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
+        } else {
+            lo.setPropriedade(null);
+        }
         locatarioRepository.save(lo);
 
         if (locatarioDTO.propriedadeId() != null){
@@ -87,7 +91,13 @@ public class LocatarioService {
             locatario.get().setRg(locatarioDTO.rg());
             locatario.get().setCpf(locatarioDTO.cpf());
             locatario.get().setNascimento(locatarioDTO.nascimento());
-            locatario.get().setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
+            if (locatarioDTO.propriedadeId() != null) {
+                locatario.get().setPropriedade(propriedadeRepository.findById(locatarioDTO.propriedadeId()).orElseThrow());
+                propriedadeService.alugarDesalugarCasa(locatario.get().getPropriedade().getId(), true);
+            } else {
+                propriedadeService.alugarDesalugarCasa(locatario.get().getPropriedade().getId(), false);
+                locatario.get().setPropriedade(null);
+            }
 
             return ResponseEntity.ok(locatarioRepository.save(locatario.get()));
         }

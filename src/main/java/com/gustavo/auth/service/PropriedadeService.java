@@ -50,6 +50,7 @@ public class PropriedadeService {
 
     public ResponseEntity<Propriedade> removerLocatario(String id){
         Propriedade p = propriedadeRepository.findById(id).orElseThrow();
+
         p.setLocatario(null);
         return ResponseEntity.ok(propriedadeRepository.save(p));
     }
@@ -103,7 +104,11 @@ public class PropriedadeService {
         p.setLocalizacao(propriedade.localizacao());
         p.setAluguel(propriedade.aluguel());
         p.setDataPagamento(propriedade.dataPagamento());
-        p.setProprietario(proprietarioRepository.findById(propriedade.proprietarioID()).orElseThrow());
+        if (propriedade.proprietarioID() == null){
+            p.setProprietario(null);
+        } else {
+            p.setProprietario(proprietarioRepository.findById(propriedade.proprietarioID()).orElseThrow());
+        }
 
         Propriedade updatedPropriedade = propriedadeRepository.save(p);
 

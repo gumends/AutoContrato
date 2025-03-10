@@ -33,7 +33,7 @@ public class ProprietarioController {
         return tokenService.getUserIdFromToken(token);
     }
 
-    @GetMapping("/{status}")
+    @GetMapping("/status/{status}")
     public ResponseEntity<List<Proprietario>> buscaTodosProprietarios(
             @RequestHeader("Authorization") String token,
             @PathVariable("status") boolean status
