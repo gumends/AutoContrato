@@ -55,7 +55,7 @@ public class Propriedade {
     private Boolean alugada = false;
 
     @ManyToOne
-    @JoinColumn(name = "proprietario_id", nullable = true)
+    @JoinColumn(name = "proprietario_id")
     private Proprietario proprietario;
 
     @CreatedDate
