@@ -16,12 +16,13 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.filter.CorsFilter;
 
 @Configuration
-public class securityConfiguration {
-    @Autowired
-    SecurityFilter securityFilter;
+public class SecurityConfiguration {
 
     @Autowired
-    CorsFilter corsFilter;
+    private SecurityFilter securityFilter;
+
+    @Autowired
+    private CorsFilter corsFilter;
 
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity httpSecurity) throws Exception {
@@ -32,12 +33,43 @@ public class securityConfiguration {
                 .authorizeHttpRequests(authorize -> authorize
                         .requestMatchers(HttpMethod.POST, "/auth/login").permitAll()
                         .requestMatchers(HttpMethod.POST, "/auth/registrar").permitAll()
+
+                        // Permissões para /proprietarios
                         .requestMatchers(HttpMethod.POST, "/proprietarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/proprietarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/proprietarios/status/{status}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/proprietarios/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/proprietarios/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/proprietarios/{id}/status").hasRole("USER")
+
+                        // Permissões para /propriedades (Apenas USER)
                         .requestMatchers(HttpMethod.GET, "/propriedades").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/propriedades/todos").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/propriedades/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/propriedades/aluguel").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/propriedades").hasRole("USER")
-                        .requestMatchers(HttpMethod.PATCH, "/locatarios/:id/status").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/propriedades/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/propriedades/{id}/status").hasRole("USER")
+
+                        // Permissões para /locatarios (Apenas USER)
+                        .requestMatchers(HttpMethod.GET, "/locatarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/locatarios/todos").hasRole("USER")
+                        .requestMatchers(HttpMethod.GET, "/locatarios/{id}").hasRole("USER")
                         .requestMatchers(HttpMethod.POST, "/locatarios").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/locatarios/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/locatarios/{id}/status").hasRole("USER")
+
+                        // Permissões para /item
                         .requestMatchers(HttpMethod.GET, "/item").hasRole("USER")
+
+                        // Permissões para /usuarios (Apenas ADMIN)
+                        .requestMatchers(HttpMethod.GET, "/usuarios").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.GET, "/usuarios/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/usuarios/{id}").hasRole("USER")
+                        .requestMatchers(HttpMethod.DELETE, "/usuarios/{id}").hasRole("ADMIN")
+                        .requestMatchers(HttpMethod.PATCH, "/usuarios/{id}/senha").hasRole("USER")
+                        .requestMatchers(HttpMethod.PATCH, "/usuarios/{id}/permissao").hasRole("ADMIN")
+
                         .anyRequest().authenticated()
                 )
                 .exceptionHandling(ex -> ex.authenticationEntryPoint(new CustomAuthenticationEntryPoint()))
