@@ -50,7 +50,7 @@ public class AuthenticationController {
                     registerDto.nome(),
                     registerDto.cpf(),
                     registerDto.email(),
-                    registerDto.role()
+                    registerDto.permissao()
             );
             this.repository.save(newUser);
             return this.login(new AutenticateDTO(registerDto.email(), registerDto.senha()));
