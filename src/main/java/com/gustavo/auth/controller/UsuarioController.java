@@ -3,7 +3,6 @@ package com.gustavo.auth.controller;
 import com.gustavo.auth.dto.PropriedadeDTO;
 import com.gustavo.auth.dto.RegisterDto;
 import com.gustavo.auth.dto.RoleDTO;
-import com.gustavo.auth.model.UserRole;
 import com.gustavo.auth.model.Usuario;
 import com.gustavo.auth.service.UsuarioService;
 import org.springframework.data.domain.Page;

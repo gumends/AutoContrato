@@ -28,11 +28,18 @@ public class Usuario implements UserDetails {
 
     @JsonIgnore
     private String senha;
+
+    @Column(nullable = false)
     private String nome;
+
+    @Column(nullable = false)
     private String cpf;
+
+    @Column(nullable = false)
     private String email;
 
-    private UserRole role;
+    @Column(nullable = false)
+    private UsuarioPermissao permissao;
 
     @CreatedDate
     @Column(name = "created_at", nullable = false, updatable = false)
@@ -53,17 +60,17 @@ public class Usuario implements UserDetails {
         this.updatedAt = LocalDateTime.now();
     }
 
-    public Usuario(String senha, String nome, String cpf, String email, UserRole role) {
+    public Usuario(String senha, String nome, String cpf, String email, UsuarioPermissao permissao) {
         this.senha = senha;
         this.nome = nome;
         this.cpf = cpf;
         this.email = email;
-        this.role = role;
+        this.permissao = permissao;
     }
 
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
-        if(this.role == UserRole.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
+        if(this.permissao == UsuarioPermissao.ADMIN) return List.of(new SimpleGrantedAuthority("ROLE_ADMIN"), new SimpleGrantedAuthority("ROLE_USER"));
         else return List.of(new SimpleGrantedAuthority("ROLE_USER"));
     }
 

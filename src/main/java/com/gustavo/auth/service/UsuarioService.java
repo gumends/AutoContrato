@@ -3,8 +3,8 @@ package com.gustavo.auth.service;
 import com.gustavo.auth.dto.RegisterDto;
 import com.gustavo.auth.dto.RoleDTO;
 import com.gustavo.auth.exception.exceptions.EventNotFoundException;
-import com.gustavo.auth.model.UserRole;
 import com.gustavo.auth.model.Usuario;
+import com.gustavo.auth.model.UsuarioPermissao;
 import com.gustavo.auth.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -50,9 +50,9 @@ public class UsuarioService {
         Usuario u = userRepository.findById(id).orElseThrow(() -> new EventNotFoundException("Usuário não encontrado"));
 
         if (roleDTO.getRole().equalsIgnoreCase("ADMIN")) {
-            u.setRole(UserRole.ADMIN);
+            u.setPermissao(UsuarioPermissao.ADMIN);
         } else if (roleDTO.getRole().equalsIgnoreCase("USER")) {
-            u.setRole(UserRole.USER);
+            u.setPermissao(UsuarioPermissao.USER);
         } else {
             throw new EventNotFoundException("Tipo de usuário não encontrado");
         }
