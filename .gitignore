@@ -31,7 +31,6 @@ Thumbs.db
 *.log
 
 ### Ignorar arquivos do Docker
-/docker/
 *.env
 
 ### Ignorar arquivos gerados pelo OS
