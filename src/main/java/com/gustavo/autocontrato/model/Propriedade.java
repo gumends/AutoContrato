@@ -40,7 +40,7 @@ public class Propriedade {
 
     private BigDecimal aluguel;
 
-    private LocalDateTime dataPagamento;
+    private Date dataPagamento;
 
     @OneToOne(mappedBy = "propriedade", cascade = CascadeType.ALL)
     private Locatario locatario;
