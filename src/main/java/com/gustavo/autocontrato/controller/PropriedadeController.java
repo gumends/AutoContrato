@@ -4,6 +4,8 @@ import com.gustavo.autocontrato.dto.PropriedadeDTO;
 import com.gustavo.autocontrato.model.Propriedade;
 import com.gustavo.autocontrato.service.PropriedadeService;
 import com.gustavo.autocontrato.infra.security.TokenService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -13,7 +15,8 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/propriedades") // Recurso no plural
+@RequestMapping("/propriedades")
+@SecurityRequirement(name = "Bearer Authentication")
 public class PropriedadeController {
 
     @Autowired
@@ -27,14 +30,14 @@ public class PropriedadeController {
     }
 
     @GetMapping("/todos")
-    public ResponseEntity<List<Propriedade>> buscaTodasPropriedades(@RequestHeader("Authorization") String token){
+    public ResponseEntity<List<Propriedade>> buscaTodasPropriedades(@Parameter(hidden = true) @RequestHeader("Authorization") String token){
         String userId = getUserIdFromToken(token);
         return ResponseEntity.ok(propriedadeService.findAllPropriedades(userId).getBody());
     }
 
     @PostMapping
     public ResponseEntity<Propriedade> createPropriedade(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestBody PropriedadeDTO propriedadeDTO) {
         System.out.println(propriedadeDTO);
         String userId = getUserIdFromToken(token);
@@ -43,7 +46,7 @@ public class PropriedadeController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> updatePropriedade(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id,
             @RequestBody PropriedadeDTO propriedadeDTO,
             @RequestParam(defaultValue = "false") boolean removeProprietario,
@@ -63,7 +66,7 @@ public class PropriedadeController {
 
     @GetMapping
     public Page<Propriedade> getAllPropriedades(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "true") boolean status,
             @RequestParam(defaultValue = "") String rua,
             @RequestParam(defaultValue = "0") int pagina,
@@ -74,7 +77,7 @@ public class PropriedadeController {
 
     @GetMapping("/{id}")
     public ResponseEntity<?> getPropriedadeById(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return propriedadeService.getById(id, userId);
@@ -82,7 +85,7 @@ public class PropriedadeController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> changeStatusPropriedade(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return propriedadeService.changeStatusPropriedade(id, userId);
@@ -90,7 +93,7 @@ public class PropriedadeController {
 
     @GetMapping("/aluguel")
     public ResponseEntity<Map<String, Object>> calculateRent(
-            @RequestHeader("Authorization") String token
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token
     ){
         String userId = getUserIdFromToken(token);
         return propriedadeService.calculateRent(userId);

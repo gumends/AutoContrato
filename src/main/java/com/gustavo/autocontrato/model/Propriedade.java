@@ -9,6 +9,7 @@ import org.springframework.data.annotation.LastModifiedDate;
 
 import java.math.BigDecimal;
 import java.time.LocalDateTime;
+import java.util.Date;
 
 @Getter
 @Setter
@@ -39,7 +40,7 @@ public class Propriedade {
 
     private BigDecimal aluguel;
 
-    private String dataPagamento;
+    private LocalDateTime dataPagamento;
 
     @OneToOne(mappedBy = "propriedade", cascade = CascadeType.ALL)
     private Locatario locatario;

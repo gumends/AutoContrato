@@ -2,6 +2,7 @@ package com.gustavo.autocontrato.service;
 
 import com.gustavo.autocontrato.dto.PermissaoDTO;
 import com.gustavo.autocontrato.dto.RegisterDto;
+import com.gustavo.autocontrato.dto.SenhaDTO;
 import com.gustavo.autocontrato.exception.exceptions.EventNotFoundException;
 import com.gustavo.autocontrato.model.Usuario;
 import com.gustavo.autocontrato.model.UsuarioPermissao;
@@ -58,9 +59,9 @@ public class UsuarioService {
         return ResponseEntity.ok(userRepository.save(u));
     }
 
-    public ResponseEntity<Usuario> alterarSenha(String id, String senha){
+    public ResponseEntity<Usuario> alterarSenha(String id, SenhaDTO senhaDTO){
         Usuario u = userRepository.findById(id).orElseThrow();
-        String encrypted = new BCryptPasswordEncoder().encode(senha);
+        String encrypted = new BCryptPasswordEncoder().encode(senhaDTO.senha());
         u.setSenha(encrypted);
         return ResponseEntity.ok(userRepository.save(u));
     }

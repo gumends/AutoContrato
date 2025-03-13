@@ -4,6 +4,8 @@ import com.gustavo.autocontrato.dto.LocatarioDTO;
 import com.gustavo.autocontrato.infra.security.TokenService;
 import com.gustavo.autocontrato.model.Locatario;
 import com.gustavo.autocontrato.service.LocatarioService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -13,6 +15,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/locatarios")
+@SecurityRequirement(name = "Bearer Authentication")
 public class LocatarioController {
 
     @Autowired
@@ -27,7 +30,7 @@ public class LocatarioController {
 
     @GetMapping("/todos")
     public ResponseEntity<List<Locatario>> PropriedadeController(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,  // ✅ Swagger não solicita mais
             @RequestParam(defaultValue = "true") boolean status,
             @RequestParam(defaultValue = "true") boolean alocado
     ) {
@@ -37,7 +40,7 @@ public class LocatarioController {
 
     @PostMapping
     public ResponseEntity<?> createLocatario(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestBody LocatarioDTO locatarioDTO) {
         String userId = getUserIdFromToken(token);
         return locatarioService.createLocatario(userId, locatarioDTO);
@@ -45,7 +48,7 @@ public class LocatarioController {
 
     @PatchMapping("/{id}")
     public ResponseEntity<?> patchLocatario(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestBody LocatarioDTO locatarioDTO,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
@@ -54,7 +57,7 @@ public class LocatarioController {
 
     @GetMapping
     public Page<Locatario> getAllLocatarios(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "true") boolean status,
             @RequestParam(defaultValue = "") String nome,
             @RequestParam(defaultValue = "0") int pagina,
@@ -65,7 +68,7 @@ public class LocatarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Locatario> getLocatarioById(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return locatarioService.findLocatario(id, userId);
@@ -73,7 +76,7 @@ public class LocatarioController {
 
     @PatchMapping("/{id}/status")
     public ResponseEntity<?> updateLocatarioStatus(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return locatarioService.changeStatusLocatario(id, userId);

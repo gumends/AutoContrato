@@ -6,6 +6,8 @@ import com.gustavo.autocontrato.model.Proprietario;
 import com.gustavo.autocontrato.repository.ProprietarioRepository;
 import com.gustavo.autocontrato.service.PropriedadeService;
 import com.gustavo.autocontrato.service.ProprietarioService;
+import io.swagger.v3.oas.annotations.Parameter;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,7 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/proprietarios")
-@CrossOrigin(origins = "*")
+@SecurityRequirement(name = "Bearer Authentication")
 public class ProprietarioController {
 
     @Autowired
@@ -35,7 +37,7 @@ public class ProprietarioController {
 
     @GetMapping("/status/{status}")
     public ResponseEntity<List<Proprietario>> findAllProprietarios(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("status") boolean status
     ){
         String userId = getUserIdFromToken(token);
@@ -44,7 +46,7 @@ public class ProprietarioController {
 
     @GetMapping("/{id}")
     public ResponseEntity<Proprietario> getById(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @PathVariable("id") String id) {
         String userId = getUserIdFromToken(token);
         return proprietarioService.getById(id, userId);
@@ -52,7 +54,7 @@ public class ProprietarioController {
 
     @PostMapping
     public ResponseEntity<?> createProprietario(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestBody ProprietarioDTO proprietarioDTO) {
         String userId = getUserIdFromToken(token);
         return proprietarioService.createProprietario(proprietarioDTO, userId);
@@ -60,7 +62,7 @@ public class ProprietarioController {
 
     @GetMapping
     public Page<Proprietario> getAllProprietarios(
-            @RequestHeader("Authorization") String token,
+            @Parameter(hidden = true) @RequestHeader("Authorization") String token,
             @RequestParam(defaultValue = "true") boolean status,
             @RequestParam(defaultValue = "") String nome,
             @RequestParam(defaultValue = "0") int pagina,

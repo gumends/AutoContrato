@@ -2,8 +2,10 @@ package com.gustavo.autocontrato.controller;
 
 import com.gustavo.autocontrato.dto.PermissaoDTO;
 import com.gustavo.autocontrato.dto.RegisterDto;
+import com.gustavo.autocontrato.dto.SenhaDTO;
 import com.gustavo.autocontrato.model.Usuario;
 import com.gustavo.autocontrato.service.UsuarioService;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import org.springframework.data.domain.Page;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -11,6 +13,7 @@ import org.springframework.web.bind.annotation.*;
 
 @RestController
 @RequestMapping("/usuarios")
+@SecurityRequirement(name = "Bearer Authentication")
 public class UsuarioController {
 
     @Autowired
@@ -49,7 +52,7 @@ public class UsuarioController {
 
     @PatchMapping("/{id}/senha")
     public ResponseEntity<Usuario> novaSenha(
-            @RequestBody String senha,
+            @RequestBody SenhaDTO senha,
             @PathVariable("id") String id
     ){
         return usuarioService.alterarSenha(id, senha);

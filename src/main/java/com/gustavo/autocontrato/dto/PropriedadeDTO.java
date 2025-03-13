@@ -1,9 +1,9 @@
 package com.gustavo.autocontrato.dto;
 
 import java.math.BigDecimal;
+import java.time.LocalDateTime;
 
 public record PropriedadeDTO(
-        String id,
         String rua,
         int numero,
         int numCasa,
@@ -11,8 +11,7 @@ public record PropriedadeDTO(
         String cep,
         String localizacao,
         BigDecimal aluguel,
-        String dataPagamento,
-        String locatarioID,
+        LocalDateTime dataPagamento,
         String proprietarioID,
         String userId
 ) {
