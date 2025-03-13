@@ -24,6 +24,7 @@ Thumbs.db
 /application.yml
 /src/main/resources/application-*.yml
 /src/main/resources/application.properties
+/target/classes/application.properties
 
 ### Ignorar logs e caches
 /logs/
@@ -35,4 +36,4 @@ Thumbs.db
 
 ### Ignorar arquivos gerados pelo OS
 *.swp
-*.swo
+*.swotarget/
